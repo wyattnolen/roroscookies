@@ -1,0 +1,114 @@
+{% stylesheet %}
+.featured-products-section {
+  padding: 3rem 1rem;
+}
+.featured-product {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+.featured-product.reverse {
+  flex-direction: row-reverse;
+}
+.featured-product .product-content {
+  flex: 1;
+  padding: 1rem;
+}
+.featured-product .product-image {
+  flex: 1;
+  padding: 1rem;
+}
+.featured-product .product-button {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  margin-top: 1rem;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 4px;
+  transition: color 0.3s ease;
+}
+{% endstylesheet %}
+
+<div class="featured-products-section">
+  {% for block in section.blocks %}
+    {% assign product = all_products[block.settings.product] %}
+    {% if product %}
+      <div class="featured-product{% if block.settings.reverse_layout %} reverse{% endif %}" style="background-color: {{ block.settings.background_color }};">
+        <div class="product-image">
+          <img src="{{ product.featured_image | img_url: '800x' }}" alt="{{ product.title }}">
+        </div>
+        <div class="product-content">
+          <h2>{{ product.title }}</h2>
+          <p>{{ product.description | strip_html | truncatewords: 40 }}</p>
+          <div>Price: {{ product.price | money }}</div>
+          <a 
+            href="{{ product.url }}" 
+            class="product-button" 
+            style="background-color: {{ block.settings.button_color }}; color: {{ block.settings.text_color }};"
+            onmouseover="this.style.color='{{ block.settings.hover_text_color }}'"
+            onmouseout="this.style.color='{{ block.settings.text_color }}'"
+          >
+            View Product
+          </a>
+        </div>
+      </div>
+    {% endif %}
+  {% endfor %}
+</div>
+
+{% schema %}
+{
+  "name": "Featured Products",
+  "max_blocks": 10,
+  "settings": [],
+  "blocks": [
+    {
+      "type": "product_block",
+      "name": "Product",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Choose product"
+        },
+        {
+          "type": "checkbox",
+          "id": "reverse_layout",
+          "label": "Image on right",
+          "default": false
+        },
+        {
+          "type": "color",
+          "id": "background_color",
+          "label": "Background color",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "button_color",
+          "label": "Button background color",
+          "default": "#000000"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Button text color",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "hover_text_color",
+          "label": "Button text color on hover",
+          "default": "#ffcc00"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Products",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
